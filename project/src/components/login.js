@@ -1,10 +1,24 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
+import {useContext } from "react";
+import AuthContext from "../context/AuthContext"
+import { useNavigate  } from 'react-router-dom'
+
 
 export default function Login() {
+  
+  const {token, user} = useContext(AuthContext);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if(user){
+      navigate('/profile')
+    }
+  })
+
   const schema = yup
     .object({
       user_name: yup
@@ -20,8 +34,6 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    setError,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -34,16 +46,8 @@ export default function Login() {
       })
         .then(res => {
             console.log(res)
-        //   if(res.data.error !== "none"){
-        //     if(res.data.error.username){
-        //       setError("user_name", { type: "focus", message: 'Username is already exist' }, { shouldFocus: true });
-        //     }
-        //     if(res.data.error.email){
-        //       setError("email", { type: "focus", message: 'Email is already exist' }, { shouldFocus: true });
-        //     }
-        //   }else{          
-        //     navigate('/login')
-        //   }
+            token(res.data)
+            navigate('/profile')
         })
         .catch(err => {
           console.log(err)

@@ -1,13 +1,22 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from 'axios';
-import { BrowserRouter as AppRouter, Route, Switch, useNavigate  } from 'react-router-dom'
-
+import { useNavigate  } from 'react-router-dom'
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 
 export default function Registration() {
+  
+  const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
+  useEffect(() => {
+    if(user){
+      navigate('/profile')
+    }
+  })
   const schema = yup
     .object({
       user_name: yup.string().required("User name is required")
@@ -31,13 +40,11 @@ export default function Registration() {
     register,
     handleSubmit, 
     setError,
-    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const navigate = useNavigate();
 
   const onSubmit = (data) => {
 
